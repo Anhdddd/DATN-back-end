@@ -1,12 +1,13 @@
-﻿using DATN_back_end.Dtos.Auth;
+﻿using DATN_back_end.Dtos;
+using DATN_back_end.Dtos.Auth;
 
 namespace DATN_back_end.Services.AuthService
 {
     public interface IAuthService
     {
-        Task<string> Login(LoginDto loginDto);
+        Task<CustomResponse<LoginRegisterResponseDto>> Login(LoginDto loginDto);
 
-        Task<string> Register(RegistrationDto registrationDto);
+        Task<CustomResponse<LoginRegisterResponseDto>> Register(RegistrationDto registrationDto);
 
     }
 }

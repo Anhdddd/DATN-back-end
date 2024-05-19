@@ -46,7 +46,6 @@ namespace DATN_back_end.Common
                 new Claim("UserId", tokenDto.UserId.ToString()),
                 new Claim("Role", tokenDto.Role.ToString()),
                 new Claim("FullName", tokenDto.FullName),
-                new Claim("Phone", tokenDto.Phone),
                 new Claim("Email", tokenDto.Email),
             };
 
@@ -74,9 +73,6 @@ namespace DATN_back_end.Common
         public Guid UserId { get; set; }
         public Role Role { get; set; }
         public string FullName { get; set; }
-
-        public string Phone { get; set; }
-
         public string Email { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using DATN_back_end.Common;
+using DATN_back_end.Dtos;
 using DATN_back_end.Dtos.Auth;
 using DATN_back_end.Entities;
 using DATN_back_end.Services.UserService;
@@ -15,7 +16,7 @@ namespace DATN_back_end.Services.AuthService
 
         }
 
-        public async Task<string> Login(LoginDto loginDto)
+        public async Task<CustomResponse<LoginRegisterResponseDto>> Login(LoginDto loginDto)
         {
             var currentUser = await _userService.GetUserByEmailAsync(loginDto.Email);
             if (currentUser == null)
@@ -24,31 +25,35 @@ namespace DATN_back_end.Services.AuthService
             }
 
             var hashedPassword = SecurityFunction.HashPassword(loginDto.Password, currentUser.PasswordSalt);
-            if (currentUser.HashedPassword != hashedPassword || currentUser.Role != loginDto.Role)
+            if (currentUser.HashedPassword != hashedPassword)
             {
                 throw new InvalidCredentialsException();
             }
 
-            return SecurityFunction.GenerateToken(new ClaimData()
+            return new CustomResponse<LoginRegisterResponseDto>
             {
-                UserId = currentUser.Id,
-                Role = currentUser.Role,
-                FullName = currentUser.FullName,
-                Phone = currentUser.PhoneNumber,
-                Email = currentUser.Email
-            }, _configuration);
+                Data = new LoginRegisterResponseDto
+                {
+                    Id = currentUser.Id,
+                    Role = currentUser.Role,
+                    Token = SecurityFunction.GenerateToken(new ClaimData()
+                    {
+                        UserId = currentUser.Id,
+                        Role = currentUser.Role,
+                        FullName = currentUser.FullName,
+                        Email = currentUser.Email
+                    }, _configuration)
+                }
+            };
+
         }
 
-        public async Task<string> Register(RegistrationDto registrationDto)
+        public async Task<CustomResponse<LoginRegisterResponseDto>> Register(RegistrationDto registrationDto)
         {
             var users = await _userService.GetUsersAsync();
             if (users.Any(u => u.Email == registrationDto.Email))
             {
                 throw new EmailIsAlreadyExistedException();
-            }
-            else if (users.Any(u => u.PhoneNumber == registrationDto.PhoneNumber))
-            {
-                throw new PhoneIsAlreadyExistedException();
             }
 
             var passwordSalt = SecurityFunction.GenerateRandomString();
@@ -61,19 +66,27 @@ namespace DATN_back_end.Services.AuthService
                 HashedPassword = hashedPassword,
                 Email = registrationDto.Email,
                 Role = (Role)registrationDto.Role,
-                PhoneNumber = registrationDto.PhoneNumber
+                PhoneNumber = registrationDto.PhoneNumber,
+                FacebookLink = registrationDto.FacebookLink
             };
 
             await _userService.AddAsync(newUser);
 
-            return SecurityFunction.GenerateToken(new ClaimData()
+            return new CustomResponse<LoginRegisterResponseDto>
             {
-                UserId = newUser.Id,
-                Role = newUser.Role,
-                FullName = newUser.FullName,
-                Phone = newUser.PhoneNumber,
-                Email = newUser.Email
-            }, _configuration);
+                Data = new LoginRegisterResponseDto
+                {
+                    Id = newUser.Id,
+                    Role = newUser.Role,
+                    Token = SecurityFunction.GenerateToken(new ClaimData()
+                    {
+                        UserId = newUser.Id,
+                        Role = newUser.Role,
+                        FullName = newUser.FullName,
+                        Email = newUser.Email
+                    }, _configuration)
+                }
+            };
         }
     }
 }

@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using DATN_back_end.Entities;
 
 namespace DATN_back_end.Dtos.Auth
 {
@@ -16,7 +17,9 @@ namespace DATN_back_end.Dtos.Auth
         [Required]
         public string Email { get; set; }
 
-        [Required]
-        public string PhoneNumber { get; set; }
+        public string? PhoneNumber { get; set; }
+
+        public string? FacebookLink { get; set; }
+
     }
 }

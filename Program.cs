@@ -94,6 +94,8 @@ app.UseSwaggerUI();
 
 app.UseCustomExceptionHandler();
 
+app.UseCors(options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
