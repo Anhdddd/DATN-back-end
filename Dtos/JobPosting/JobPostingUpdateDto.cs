@@ -5,7 +5,6 @@ namespace DATN_back_end.Dtos.JobPosting
 {
     public class JobPostingUpdateDto
     {
-        public Guid Id { get; set; }
         public string? Title { get; set; }
         public DateTime? ExpiryDate { get; set; }
         public Occupation? Occupation { get; set; }

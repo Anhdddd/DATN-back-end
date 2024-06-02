@@ -109,10 +109,10 @@ namespace DATN_back_end.Services.JobPostingService
             };
         }
 
-        public async Task<CustomResponse<JobPostingDetailDto>> UpdateAsync(JobPostingUpdateDto jobPostingDto)
+        public async Task<CustomResponse<JobPostingDetailDto>> UpdateAsync(Guid id, JobPostingUpdateDto jobPostingDto)
         {
             var jobPosting = await (await _unitOfWork.Queryable<JobPosting>())
-                .FirstOrDefaultAsync(x => x.Id == jobPostingDto.Id);
+                .FirstOrDefaultAsync(x => x.Id == id);
             if (jobPosting == null)
             {
                 throw new NotFoundException();

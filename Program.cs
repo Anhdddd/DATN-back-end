@@ -9,6 +9,7 @@ using DATN_back_end.Services.AuthService;
 using DATN_back_end.Services.CompanyService;
 using DATN_back_end.Services.DashBoardService;
 using DATN_back_end.Services.JobPostingService;
+using DATN_back_end.Services.LocationService;
 using DATN_back_end.Services.UserService;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -80,6 +81,7 @@ builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddScoped<ICompanyService, CompanyService>();
 builder.Services.AddScoped<IEmployerDashboardService, EmployerDashboardService>();
 builder.Services.AddScoped<IJobPostingService, JobPostingService>();
+builder.Services.AddScoped<ILocationService, LocationService>();
 
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 builder.Services.AddHttpContextAccessor();

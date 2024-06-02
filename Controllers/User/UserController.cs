@@ -25,7 +25,7 @@ namespace DATN_back_end.Controllers.User
         }
 
         [HttpPut("avatar")]
-        public async Task<IActionResult> UpdateAvatarAsync([FromForm] IFormFile file)
+        public async Task<IActionResult> UpdateAvatarAsync( IFormFile file)
         {
             await _userService.UpdateAvatarAsync(file);
             return Ok();

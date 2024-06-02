@@ -4,7 +4,7 @@
     {
         public Guid Id { get; set; }
         public string Title { get; set; }
-        public int Salary { get; set; }
+        public string SalaryRange { get; set; }
         public string CompanyName { get; set; }
         public string CompanyLogo { get; set; }
     }

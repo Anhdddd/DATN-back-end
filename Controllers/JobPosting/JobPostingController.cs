@@ -21,16 +21,16 @@ namespace DATN_back_end.Controllers.JobPosting
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddAsync([FromForm] JobPostingAddDto jobPostingAddDto)
+        public async Task<IActionResult> AddAsync([FromBody] JobPostingAddDto jobPostingAddDto)
         {
             var jobPostingId = await _jobPostingService.AddAsync(jobPostingAddDto);
             return Ok(jobPostingId);
         }
 
-        [HttpPut]
-        public async Task<IActionResult> UpdateAsync([FromForm] JobPostingUpdateDto jobPostingUpdateDto)
+        [HttpPut("{jobPostingId}")]
+        public async Task<IActionResult> UpdateAsync([FromRoute] Guid jobPostingId, [FromBody] JobPostingUpdateDto jobPostingUpdateDto)
         {
-            await _jobPostingService.UpdateAsync(jobPostingUpdateDto);
+            await _jobPostingService.UpdateAsync(jobPostingId, jobPostingUpdateDto);
             return Ok();
         }
 

@@ -9,7 +9,7 @@ namespace DATN_back_end.Services.JobPostingService
     public interface IJobPostingService
     {
         Task<CustomResponse<JobPostingDetailDto>> AddAsync(JobPostingAddDto jobPostingDto);
-        Task<CustomResponse<JobPostingDetailDto>> UpdateAsync(JobPostingUpdateDto jobPostingDto);
+        Task<CustomResponse<JobPostingDetailDto>> UpdateAsync(Guid id, JobPostingUpdateDto jobPostingDto);
         Task<CustomResponse<List<JobPostingDto>>> GetJobPostingsAsync(FilterJobPostingDto? filterJobPostingDto, int pageSize, int pageNumber);
         Task<CustomResponse<JobPostingDetailDto>> GetJobPostingByIdAsync(Guid jobPostingId);
         Task<CustomResponse<object>> SaveJobPosting(Guid jobPostingId);

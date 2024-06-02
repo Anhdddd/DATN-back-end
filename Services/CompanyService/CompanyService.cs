@@ -35,18 +35,18 @@ namespace DATN_back_end.Services.CompanyService
 
             await _unitOfWork.AddAsync(company);
             await _unitOfWork.SaveChangesAsync();
-            
+
             return new CustomResponse<CompanyDetailDto>
             {
                 Data = _mapper.Map<CompanyDetailDto>(company),
             };
         }
 
-        public async Task<CustomResponse<List<CompanyDto>>> GetCompaniesAsync(FilterCompanyDto? filterCompanyDto, string searchValue = "", int pageSize = 10, int pageNumber= 1)
+        public async Task<CustomResponse<List<CompanyDto>>> GetCompaniesAsync(FilterCompanyDto? filterCompanyDto, string searchValue = "", int pageSize = 10, int pageNumber = 1)
         {
             var companyQuery = await _unitOfWork.Queryable<Company>();
             companyQuery = companyQuery.Include(x => x.Owner);
-            
+
 
             if (string.IsNullOrEmpty(searchValue) == false)
             {
@@ -90,7 +90,7 @@ namespace DATN_back_end.Services.CompanyService
             {
                 throw new NotFoundException();
             }
-            
+
             return new CustomResponse<CompanyDetailDto>
             {
                 Data = _mapper.Map<CompanyDetailDto>(company),
@@ -155,7 +155,7 @@ namespace DATN_back_end.Services.CompanyService
 
             await _unitOfWork.UpdateAsync(company);
             await _unitOfWork.SaveChangesAsync();
-            
+
             return new CustomResponse<CompanyDetailDto>
             {
                 Data = _mapper.Map<CompanyDetailDto>(company),
@@ -174,12 +174,13 @@ namespace DATN_back_end.Services.CompanyService
             if (companyDto.Logo != null)
             {
                 List<string> imageNamesToBeDeleted = new();
+                if (company.Logo != null)
+                {
+                    var imageNameToBeDeleted = company.Logo.Split("/").Last();
+                    imageNamesToBeDeleted.Add(imageNameToBeDeleted);
+                    await _fileService.DeleteFileAsync(imageNamesToBeDeleted);
+                }
 
-                var imageNameToBeDeleted = company.Logo.Split("/").Last();
-
-                imageNamesToBeDeleted.Add(imageNameToBeDeleted);
-
-                await _fileService.DeleteFileAsync(imageNamesToBeDeleted);
                 company.Logo = await _fileService.UploadFileGetUrlAsync(companyDto.Logo);
             }
 
