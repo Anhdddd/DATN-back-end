@@ -11,6 +11,7 @@ using DATN_back_end.Services.DashBoardService;
 using DATN_back_end.Services.JobPostingService;
 using DATN_back_end.Services.LocationService;
 using DATN_back_end.Services.UserService;
+using DATN_back_end.Data.Seed;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
@@ -90,6 +91,17 @@ var app = builder.Build();
 
 using var scope = app.Services.CreateScope();
 var serviceProvider = scope.ServiceProvider;
+try
+{
+    var context = serviceProvider.GetRequiredService<DataContext>();
+    Seed.SeedAll(context);
+    context.Database.Migrate();
+}
+catch (Exception ex)
+{
+    var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
+    logger.LogError(ex, "Migration Failed");
+}
 
 app.UseSwagger();
 app.UseSwaggerUI();

@@ -21,5 +21,7 @@ namespace DATN_back_end.Services.JobPostingService
         Task<CustomResponse<List<UserJobPostingDto>>> GetUserJobPostingsAsync(FilterUserJobPostingDto filterUserJobPostingDto, int pageSize, int pageNumber);
         Task<CustomResponse<UserJobPostingDto>> SubmitApplication(SubmitApplicationDto submitApplicationDto);
         Task<CustomResponse<Dictionary<string, int>>> GetTopOccupation();
+        Task<CustomResponse<List<OccupationDto>>> GetOccupations();
+        Task<CustomResponse<List<JobPostingDto>>> GetMyCompanyJobPostingsAsync(int pageSize, int pageNumber);
     }
 }

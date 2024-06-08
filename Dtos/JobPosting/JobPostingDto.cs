@@ -7,5 +7,10 @@
         public string SalaryRange { get; set; }
         public string CompanyName { get; set; }
         public string CompanyLogo { get; set; }
+        public Guid CompanyId { get; set; }
+        public string OccupationName { get; set; }
+        public Guid OccupationId { get; set; }
+        public DateTimeOffset CreatedDate { get; set; }
     }
 }
+// ok Vu

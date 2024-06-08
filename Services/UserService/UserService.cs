@@ -37,7 +37,7 @@ namespace DATN_back_end.Services.UserService
         public async Task<User> GetUserByEmailAsync(string email)
         {
             var userQuery = await _unitOfWork.Queryable<User>();
-            var user = await userQuery.FirstOrDefaultAsync(u => u.Email == email);
+            var user = await userQuery.Include(u => u.Company).FirstOrDefaultAsync(u => u.Email == email);
             return user;
         }
 

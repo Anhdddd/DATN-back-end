@@ -8,7 +8,8 @@ namespace DATN_back_end.Dtos.JobPosting
         public Guid Id { get; set; }
         public string Title { get; set; }
         public DateTime ExpiryDate { get; set; }
-        public Occupation Occupation { get; set; }
+        public string OccupationName { get; set; }
+        public Guid OccupationId { get; set; }
         public string SalaryRange { get; set; }
         public string Description { get; set; }
         public string Requirement { get; set; }

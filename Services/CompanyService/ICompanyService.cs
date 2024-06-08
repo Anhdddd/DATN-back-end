@@ -1,4 +1,5 @@
-﻿using DATN_back_end.Dtos;
+﻿using DATN_back_end.Common;
+using DATN_back_end.Dtos;
 using DATN_back_end.Dtos.Company;
 
 namespace DATN_back_end.Services.CompanyService
@@ -13,5 +14,6 @@ namespace DATN_back_end.Services.CompanyService
         Task<CustomResponse<CompanyDetailDto>> GetMyCompanyAsync();
         Task<CustomResponse<object>> SaveCompanyAsync(Guid companyId);
         Task<CustomResponse<List<CompanyDto>>> GetSavedCompanyAsync(int pageSize, int pageNumber);
+        Task<CustomResponse<CompanyDetailDto>> UpdateCompanyStatus(Guid companyId, CompanyStatus companyStatus);
     }
 }

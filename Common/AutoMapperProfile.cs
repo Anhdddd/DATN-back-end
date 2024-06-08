@@ -15,10 +15,14 @@ namespace DATN_back_end.Common
             CreateMap<Company, CompanyDto>();
             CreateMap<JobPosting, JobPostingDetailDto>()
                 .ForMember(dest => dest.CompanyName, opt => opt.MapFrom(src => src.Company.Name))
-                .ForMember(dest => dest.CompanyLogo, opt => opt.MapFrom(src => src.Company.Logo));
+                .ForMember(dest => dest.CompanyLogo, opt => opt.MapFrom(src => src.Company.Logo))
+                .ForMember(dest => dest.OccupationId, opt => opt.MapFrom(src => src.Occupation.Id))
+                .ForMember(dest => dest.OccupationName, opt => opt.MapFrom(src => src.Occupation.Name));
             CreateMap<JobPosting, JobPostingDto>()
                 .ForMember(dest => dest.CompanyName, opt => opt.MapFrom(src => src.Company.Name))
-                .ForMember(dest => dest.CompanyLogo, opt => opt.MapFrom(src => src.Company.Logo));
+                .ForMember(dest => dest.CompanyLogo, opt => opt.MapFrom(src => src.Company.Logo))
+                .ForMember(dest => dest.OccupationId, opt => opt.MapFrom(src => src.Occupation.Id))
+                .ForMember(dest => dest.OccupationName, opt => opt.MapFrom(src => src.Occupation.Name));
             CreateMap<UserJobPosting, UserJobPostingDto>()
                 .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.JobPosting.Title))
                 .ForMember(dest => dest.SubmittedDate, opt => opt.MapFrom(src => src.CreatedDate))
@@ -26,6 +30,7 @@ namespace DATN_back_end.Common
                 .ForMember(dest => dest.CV, opt => opt.MapFrom(src => src.CV))
                 .ForMember(dest => dest.SalaryRange, opt => opt.MapFrom(src => src.JobPosting.SalaryRange));
             CreateMap<User, UserDetailDto>();
+            CreateMap<Occupation, OccupationDto>();
         }
     }
 }

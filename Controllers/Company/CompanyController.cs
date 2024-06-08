@@ -1,4 +1,5 @@
-﻿using DATN_back_end.Dtos.Company;
+﻿using DATN_back_end.Common;
+using DATN_back_end.Dtos.Company;
 using DATN_back_end.Filters;
 using DATN_back_end.Services.CompanyService;
 using Microsoft.AspNetCore.Authorization;
@@ -8,7 +9,6 @@ namespace DATN_back_end.Controllers.Company
 {
     [Route("api/[controller]")]
     [ApiController]
-    [AuthorizeFilter]
     public class CompanyController : ControllerBase
     {
         private readonly ICompanyService _companyService;
@@ -18,6 +18,7 @@ namespace DATN_back_end.Controllers.Company
             _companyService = companyService;
         }
 
+        [AuthorizeFilterAttribute([Role.Employer])]
         [HttpPut]
         public async Task<IActionResult> UpdateCompany([FromBody] CompanyUpdateDto companyDto)
         {
@@ -25,6 +26,7 @@ namespace DATN_back_end.Controllers.Company
             return Ok();
         }
 
+        [AuthorizeFilterAttribute([Role.Employer])]
         [HttpPut("logo")]
         public async Task<IActionResult> UpdateLogo([FromForm] CompanyUpdateImageDto companyDto)
         {
@@ -46,6 +48,7 @@ namespace DATN_back_end.Controllers.Company
             return Ok(company);
         }
 
+        [AuthorizeFilterAttribute([Role.Employer])]
         [HttpGet("my-company")]
         public async Task<IActionResult> GetMyCompany()
         {
@@ -53,6 +56,7 @@ namespace DATN_back_end.Controllers.Company
             return Ok(company);
         }
 
+        [AuthorizeFilterAttribute([Role.User])]
         [HttpPost("{companyId}/save")]
         public async Task<IActionResult> SaveCompany(Guid companyId)
         {
@@ -60,6 +64,7 @@ namespace DATN_back_end.Controllers.Company
             return Ok();
         }
 
+        [AuthorizeFilterAttribute([Role.Employer])]
         [HttpPost]
         public async Task<IActionResult> AddCompany([FromForm] CompanyAddDto companyDto)
         {
@@ -67,11 +72,20 @@ namespace DATN_back_end.Controllers.Company
             return Ok(companyId);
         }
 
+        [AuthorizeFilterAttribute([Role.User])]
         [HttpGet("saved")]
         public async Task<IActionResult> GetSavedCompanies(int pageSize = 10, int pageNumber = 1)
         {
             var companies = await _companyService.GetSavedCompanyAsync(pageSize, pageNumber);
             return Ok(companies);
+        }
+
+        [AuthorizeFilterAttribute([Role.Employer, Role.Admin])]
+        [HttpPut("{companyId}/status")]
+        public async Task<IActionResult> UpdateCompanyStatus(Guid companyId, CompanyStatus companyStatus)
+        {
+            await _companyService.UpdateCompanyStatus(companyId, companyStatus);
+            return Ok();
         }
     }
 }

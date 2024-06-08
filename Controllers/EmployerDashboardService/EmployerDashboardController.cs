@@ -7,7 +7,7 @@ namespace DATN_back_end.Controllers.Dashboard
 {
     [Route("api/[controller]")]
     [ApiController]
-    [AuthorizeFilter]
+    [AuthorizeFilterAttribute]
     public class EmployerDashboardController : ControllerBase
     {
         private readonly IEmployerDashboardService _employerDashboardService;

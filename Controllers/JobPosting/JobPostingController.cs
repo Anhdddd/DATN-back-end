@@ -10,7 +10,6 @@ namespace DATN_back_end.Controllers.JobPosting
 {
     [Route("api/[controller]")]
     [ApiController]
-    [AuthorizeFilter]
     public class JobPostingController : ControllerBase
     {
         private readonly IJobPostingService _jobPostingService;
@@ -20,6 +19,7 @@ namespace DATN_back_end.Controllers.JobPosting
             _jobPostingService = jobPostingService;
         }
 
+        [AuthorizeFilterAttribute([Role.Employer])]
         [HttpPost]
         public async Task<IActionResult> AddAsync([FromBody] JobPostingAddDto jobPostingAddDto)
         {
@@ -27,6 +27,7 @@ namespace DATN_back_end.Controllers.JobPosting
             return Ok(jobPostingId);
         }
 
+        [AuthorizeFilterAttribute([Role.Employer])]
         [HttpPut("{jobPostingId}")]
         public async Task<IActionResult> UpdateAsync([FromRoute] Guid jobPostingId, [FromBody] JobPostingUpdateDto jobPostingUpdateDto)
         {
@@ -48,6 +49,7 @@ namespace DATN_back_end.Controllers.JobPosting
             return Ok(jobPosting);
         }
 
+        [AuthorizeFilterAttribute([Role.User])]
         [HttpPost("{jobPostingId}/save")]
         public async Task<IActionResult> SaveJobPosting(Guid jobPostingId)
         {
@@ -55,6 +57,7 @@ namespace DATN_back_end.Controllers.JobPosting
             return Ok();
         }
 
+        [AuthorizeFilterAttribute([Role.User])]
         [HttpPost("{jobPostingId}/unsave")]
         public async Task<IActionResult> UnSaveJobPosting(Guid jobPostingId)
         {
@@ -62,6 +65,7 @@ namespace DATN_back_end.Controllers.JobPosting
             return Ok();
         }
 
+        [AuthorizeFilterAttribute([Role.User])]
         [HttpGet("saved")]
         public async Task<IActionResult> GetSavedJobPostingsAsync(int pageSize = 10, int pageNumber = 1)
         {
@@ -69,6 +73,7 @@ namespace DATN_back_end.Controllers.JobPosting
             return Ok(jobPostings);
         }
 
+        [AuthorizeFilterAttribute([Role.User])]
         [HttpPost("{jobPostingId}/increase-view-count")]
         public async Task<IActionResult> IncreaseViewCount(Guid jobPostingId)
         {
@@ -76,6 +81,7 @@ namespace DATN_back_end.Controllers.JobPosting
             return Ok();
         }
 
+        [AuthorizeFilterAttribute([Role.Employer])]
         [HttpPost("{jobPostingId}/update-status")]
         public async Task<IActionResult> UpdateJobPostingStatus(Guid jobPostingId, JobPostingStatus jobPostingStatus)
         {
@@ -83,6 +89,7 @@ namespace DATN_back_end.Controllers.JobPosting
             return Ok();
         }
 
+        [AuthorizeFilterAttribute([Role.Employer])]
         [HttpPost("{id}/change-status")]
         public async Task<IActionResult> ChangeUserJobPostingStatus(Guid id, UserJobPostingStatus status)
         {
@@ -90,6 +97,7 @@ namespace DATN_back_end.Controllers.JobPosting
             return Ok();
         }
 
+        [AuthorizeFilterAttribute([Role.Employer])]
         [HttpGet("user")]
         public async Task<IActionResult> GetUserJobPostingsAsync([FromQuery] FilterUserJobPostingDto filterUserJobPostingDto, int pageSize, int pageNumber)
         {
@@ -97,6 +105,7 @@ namespace DATN_back_end.Controllers.JobPosting
             return Ok(userJobPostings);
         }
 
+        [AuthorizeFilterAttribute([Role.User])]
         [HttpPost("submit-application")]
         public async Task<IActionResult> SubmitApplication(SubmitApplicationDto submitApplicationDto)
         {
@@ -109,6 +118,21 @@ namespace DATN_back_end.Controllers.JobPosting
         {
             var topOccupation = await _jobPostingService.GetTopOccupation();
             return Ok(topOccupation);
+        }
+
+        [HttpGet("occupations")]
+        public async Task<IActionResult> GetOccupations()
+        {
+            var occupations = await _jobPostingService.GetOccupations();
+            return Ok(occupations);
+        }
+
+        [AuthorizeFilterAttribute([Role.Employer])]
+        [HttpGet("my-company-job-postings")]
+        public async Task<IActionResult> GetMyCompanyJobPostingsAsync(int pageSize, int pageNumber)
+        {
+            var jobPostings = await _jobPostingService.GetMyCompanyJobPostingsAsync(pageSize, pageNumber);
+            return Ok(jobPostings);
         }
 
     }

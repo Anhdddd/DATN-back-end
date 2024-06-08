@@ -7,7 +7,7 @@ namespace DATN_back_end.Controllers.User
 {
     [Route("api/[controller]")]
     [ApiController]
-    [AuthorizeFilter]
+    [AuthorizeFilterAttribute]
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;

@@ -17,14 +17,12 @@ namespace DATN_back_end.Services.JobPostingService
 
         public async Task<CustomResponse<JobPostingDetailDto>> AddAsync(JobPostingAddDto jobPostingDto)
         {
+            var occupation = await (await _unitOfWork.Queryable<Occupation>()).FirstOrDefaultAsync(x => x.Id == jobPostingDto.Occupation);
             var jobPosting = new JobPosting
             {
                 Title = jobPostingDto.Title,
                 ExpiryDate = jobPostingDto.ExpiryDate,
-                Occupation = new Occupation
-                {
-                    Name = jobPostingDto.Occupation
-                },
+                Occupation = occupation,
                 SalaryRange = jobPostingDto.SalaryRange,
                 Description = jobPostingDto.Description,
                 Requirement = jobPostingDto.Requirement,
@@ -51,7 +49,7 @@ namespace DATN_back_end.Services.JobPostingService
         public async Task<CustomResponse<List<JobPostingDto>>> GetJobPostingsAsync(FilterJobPostingDto? filterJobPostingDto, int pageSize, int pageNumber)
         {
             var jobPostingQuery = await _unitOfWork.Queryable<JobPosting>();
-            jobPostingQuery = jobPostingQuery.Include(x => x.Company);
+            jobPostingQuery = jobPostingQuery.Include(x => x.Company).Include(x => x.Occupation);
 
             if (!string.IsNullOrEmpty(filterJobPostingDto.SearchValue))
             {
@@ -97,6 +95,7 @@ namespace DATN_back_end.Services.JobPostingService
         {
             var jobPosting = await (await _unitOfWork.Queryable<JobPosting>())
                 .Include(x => x.Company)
+                .Include(x => x.Occupation)
                 .FirstOrDefaultAsync(x => x.Id == jobPostingId);
             if (jobPosting == null)
             {
@@ -214,7 +213,7 @@ namespace DATN_back_end.Services.JobPostingService
         public async Task<CustomResponse<List<JobPostingDto>>> GetSavedJobPostingsAsync(int pageSize, int pageNumber)
         {
             var savedJobPostingQuery = await _unitOfWork.Queryable<UserSavedJobPosting>();
-            savedJobPostingQuery = savedJobPostingQuery.Include(x => x.JobPosting).ThenInclude(x => x.Company);
+            savedJobPostingQuery = savedJobPostingQuery.Include(x => x.JobPosting).ThenInclude(x => x.Company).Include(x => x.JobPosting).ThenInclude(x => x.Occupation);
 
             int totalItems = await savedJobPostingQuery.CountAsync();
             var pagedSavedJobPostings = await savedJobPostingQuery
@@ -254,6 +253,7 @@ namespace DATN_back_end.Services.JobPostingService
         public async Task<CustomResponse<JobPostingDetailDto>> UpdateJobPostingStatus (Guid jobPostingId, JobPostingStatus jobPostingStatus)
         {
             var jobPosting = await (await _unitOfWork.Queryable<JobPosting>())
+                .Include(x => x.Occupation)
                 .FirstOrDefaultAsync(x => x.Id == jobPostingId);
             if (jobPosting == null)
             {
@@ -344,6 +344,39 @@ namespace DATN_back_end.Services.JobPostingService
             return new CustomResponse<Dictionary<string, int>>
             {
                 Data = topOccupation
+            };
+        }
+
+        public async Task<CustomResponse<List<OccupationDto>>> GetOccupations()
+        {
+            var occupations = await (await _unitOfWork.Queryable<Occupation>()).ToListAsync();
+
+            return new CustomResponse<List<OccupationDto>>
+            {
+                Data = _mapper.Map<List<OccupationDto>>(occupations)
+            };
+        }
+
+        public async Task<CustomResponse<List<JobPostingDto>>> GetMyCompanyJobPostingsAsync(int pageSize, int pageNumber)
+        {
+            var jobPostingQuery = await _unitOfWork.Queryable<JobPosting>();
+            jobPostingQuery = jobPostingQuery.Include(x => x.Company).Include(x => x.Occupation).Where(x => x.Company.OwnerId == _currentUserService.UserId);
+
+            int totalItems = await jobPostingQuery.CountAsync();
+            var pagedJobPostings = await jobPostingQuery
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .Select(r => _mapper.Map<JobPostingDto>(r))
+                .ToListAsync();
+            return new CustomResponse<List<JobPostingDto>>
+            {
+                Data = pagedJobPostings,
+                Meta = new MetaData
+                {
+                    PageSize = pageSize,
+                    CurrentPage = pageNumber,
+                    TotalPages = (int)Math.Ceiling(totalItems / (double)pageSize)
+                }
             };
         }
     }

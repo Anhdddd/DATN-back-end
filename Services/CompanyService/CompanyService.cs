@@ -230,5 +230,22 @@ namespace DATN_back_end.Services.CompanyService
                 },
             };
         }
+
+        public async Task<CustomResponse<CompanyDetailDto>> UpdateCompanyStatus(Guid companyId, CompanyStatus companyStatus)
+        {
+            var company = await (await _unitOfWork.Queryable<Company>())
+                .FirstOrDefaultAsync(x => x.Id == companyId);
+            if (company == null)
+            {
+                throw new NotFoundException();
+            }
+            company.Status = companyStatus;
+            await _unitOfWork.UpdateAsync(company);
+            await _unitOfWork.SaveChangesAsync();
+            return new CustomResponse<CompanyDetailDto>
+            {
+                Data = _mapper.Map<CompanyDetailDto>(company),
+            };
+        }
     }
 }

@@ -8,7 +8,6 @@ namespace DATN_back_end.Controllers.Location
 {
     [Route("api/[controller]")]
     [ApiController]
-    [AuthorizeFilter]
     public class LocationController : ControllerBase
     {
         private readonly ILocationService _locationService;

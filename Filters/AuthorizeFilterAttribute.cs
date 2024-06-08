@@ -8,11 +8,16 @@ using Microsoft.IdentityModel.Tokens;
 namespace DATN_back_end.Filters
 {
     [AttributeUsage(AttributeTargets.All)]
-    public class AuthorizeFilter : Attribute, IAsyncAuthorizationFilter
+    public class AuthorizeFilterAttribute : Attribute, IAsyncAuthorizationFilter
     {
-        public AuthorizeFilter()
+        private readonly Role[]? _roles;
+
+        public AuthorizeFilterAttribute(Role[] roles)
         {
+            _roles = roles;
         }
+
+        public AuthorizeFilterAttribute() { }
 
         public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
         {
@@ -52,6 +57,11 @@ namespace DATN_back_end.Filters
                 var fullName = claims.FirstOrDefault(x => x.Type == "FullName")?.Value;
                 var role = claims.FirstOrDefault(x => x.Type == "Role")?.Value;
                 var email = claims.FirstOrDefault(x => x.Type == "Email")?.Value;
+
+                if (_roles is not null && !_roles.Contains((Role)Enum.Parse(typeof(Role), role)))
+                {
+                    throw new UnauthorizedAccessException();
+                }
 
                 var identity = new ClaimsIdentity(context.HttpContext.User.Identity);
                 identity.AddClaim(new Claim("UserId", userId));
